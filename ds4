@@ -34,8 +34,8 @@ void dequeue() {
                 highestPriorityIndex = i;
             }
         }
-        printf("Element %d dequeued from the Priority Queue with priority %d.\n", 
-               priorityQueue[highestPriorityIndex].value, 
+        printf("Element %d dequeued from the Priority Queue with priority %d.\n",
+               priorityQueue[highestPriorityIndex].value,
                priorityQueue[highestPriorityIndex].priority);
         if (front == rear) {
             front = -1;
@@ -53,6 +53,22 @@ void display() {
     if (front == -1) {
         printf("Priority Queue is empty.\n");
     } else {
+    int temp,temp1;
+    for(int i=0;i<4;i++)
+     {
+     for(int j=i+1;j<4;j++)
+     {
+     if(priorityQueue[i].priority<priorityQueue[j].priority)
+     {
+     temp=priorityQueue[i].priority;
+     temp1=priorityQueue[i].value;
+     priorityQueue[i].priority=priorityQueue[j].priority;
+     priorityQueue[i].value=priorityQueue[j].value;
+     priorityQueue[j].value=temp;
+     priorityQueue[j].priority=temp1;
+     }
+     }
+     }
         printf("Priority Queue elements (Value, Priority): ");
         for (int i = front; i <= rear; i++) {
             printf("(%d, %d) ", priorityQueue[i].value, priorityQueue[i].priority);
