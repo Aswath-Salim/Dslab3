@@ -1,14 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-// Structure to represent a term in the polynomial
 struct Term {
     int coefficient;
     int exponent;
     struct Term* next;
 };
-
-// Function to create a new term with given coefficient and exponent
 struct Term* createTerm(int coef, int exp) {
     struct Term* newTerm = (struct Term*)malloc(sizeof(struct Term));
     newTerm->coefficient = coef;
@@ -16,9 +12,6 @@ struct Term* createTerm(int coef, int exp) {
     newTerm->next = NULL;
     return newTerm;
 }
-
-
-// Function to add a term to the polynomial
 void addTerm(struct Term** poly, int coefficient, int exponent) {
     struct Term* newTerm = createTerm(coefficient, exponent);
 
@@ -34,8 +27,6 @@ void addTerm(struct Term** poly, int coefficient, int exponent) {
         current->next = newTerm;
     }
 }
-
-// Function to display the polynomial
 void displayPoly(struct Term* poly) {
     struct Term* temp = poly;
     while (temp != NULL) {
@@ -48,7 +39,6 @@ void displayPoly(struct Term* poly) {
     printf("\n");
 }
 
-// Function to add two polynomials
 struct Term* addPolynomials(struct Term* poly1, struct Term* poly2) {
     struct Term* result = NULL;
     while (poly1 != NULL && poly2 != NULL) {
@@ -65,13 +55,10 @@ struct Term* addPolynomials(struct Term* poly1, struct Term* poly2) {
         }
     }
 
-    // Add remaining terms of poly1, if any
     while (poly1 != NULL) {
         addTerm(&result, poly1->coefficient, poly1->exponent);
         poly1 = poly1->next;
     }
-
-    // Add remaining terms of poly2, if any
     while (poly2 != NULL) {
         addTerm(&result, poly2->coefficient, poly2->exponent);
         poly2 = poly2->next;
@@ -79,8 +66,6 @@ struct Term* addPolynomials(struct Term* poly1, struct Term* poly2) {
 
     return result;
 }
-
-// Function to free memory allocated for polynomial
 void freePoly(struct Term* poly) {
     struct Term* temp;
     while (poly != NULL) {
