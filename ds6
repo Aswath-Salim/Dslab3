@@ -17,18 +17,23 @@ struct Term* createTerm(int coef, int exp) {
     return newTerm;
 }
 
+
 // Function to add a term to the polynomial
-void addTerm(struct Term** poly, int coef, int exp) {
-    struct Term* newTerm = createTerm(coef, exp);
-    if (*poly == NULL) {
+void addTerm(struct Term** poly, int coefficient, int exponent) {
+    struct Term* newTerm = createTerm(coefficient, exponent);
+
+    if (*poly == NULL || exponent > (*poly)->exponent) {
+        newTerm->next = *poly;
         *poly = newTerm;
     } else {
-        struct Term* temp = *poly;
-        while (temp->next != NULL) {
-            temp = temp->next;
+        struct Term* current = *poly;
+        while (current->next != NULL && exponent < current->next->exponent) {
+            current = current->next;
         }
-        temp->next = newTerm;
-    }}
+        newTerm->next = current->next;
+        current->next = newTerm;
+    }
+}
 
 // Function to display the polynomial
 void displayPoly(struct Term* poly) {
