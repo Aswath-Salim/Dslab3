@@ -1,132 +1,105 @@
 #include <stdio.h>
 #include <stdlib.h>
-struct Term {
+
+struct Node {
     int coefficient;
     int exponent;
-    struct Term* next;
+    struct Node* next;
 };
-struct Term* createTerm(int coef, int exp) {
-    struct Term* newTerm = (struct Term*)malloc(sizeof(struct Term));
-    newTerm->coefficient = coef;
-    newTerm->exponent = exp;
-    newTerm->next = NULL;
-    return newTerm;
-}
-void addTerm(struct Term** poly, int coefficient, int exponent) {
-    struct Term* newTerm = createTerm(coefficient, exponent);
 
-    if (*poly == NULL || exponent > (*poly)->exponent) {
-        newTerm->next = *poly;
-        *poly = newTerm;
-    } else {
-        struct Term* current = *poly;
-        while (current->next != NULL && exponent < current->next->exponent) {
-            current = current->next;
-        }
-        newTerm->next = current->next;
-        current->next = newTerm;
-    }
-}
-void displayPoly(struct Term* poly) {
-    struct Term* temp = poly;
-    while (temp != NULL) {
-        printf("%dx^%d ", temp->coefficient, temp->exponent);
-        if (temp->next != NULL) {
-            printf("+ ");
-        }
-        temp = temp->next;
-    }
-    printf("\n");
-}
+int main() {
+    struct Node *poly1 = NULL, *poly2 = NULL, *result = NULL;
+    int coef, exp, choice;
+    printf("Enter the first polynomial:\n");
+    do {
+        printf("Enter coefficient: ");
+        scanf("%d", &coef);
+        printf("Enter exponent: ");
+        scanf("%d", &exp);
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->coefficient = coef;
+        newNode->exponent = exp;
+        newNode->next = poly1;
+        poly1 = newNode;
+        printf("Do you want to enter more terms for the first polynomial? (1 for Yes, 0 for No): ");
+        scanf("%d", &choice);
+    } while (choice != 0);
 
-struct Term* addPolynomials(struct Term* poly1, struct Term* poly2) {
-    struct Term* result = NULL;
+    printf("\nEnter the second polynomial:\n");
+    do {
+        printf("Enter coefficient: ");
+        scanf("%d", &coef);
+        printf("Enter exponent: ");
+        scanf("%d", &exp);
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->coefficient = coef;
+        newNode->exponent = exp;
+        newNode->next = poly2;
+        poly2 = newNode;
+        printf("Do you want to enter more terms for the second polynomial? (1 for Yes, 0 for No): ");
+        scanf("%d", &choice);
+    } while (choice != 0);
+
     while (poly1 != NULL && poly2 != NULL) {
         if (poly1->exponent > poly2->exponent) {
-            addTerm(&result, poly1->coefficient, poly1->exponent);
+            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+            newNode->coefficient = poly1->coefficient;
+            newNode->exponent = poly1->exponent;
+            newNode->next = result;
+            result = newNode;
             poly1 = poly1->next;
         } else if (poly1->exponent < poly2->exponent) {
-            addTerm(&result, poly2->coefficient, poly2->exponent);
+            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+            newNode->coefficient = poly2->coefficient;
+            newNode->exponent = poly2->exponent;
+            newNode->next = result;
+            result = newNode;
             poly2 = poly2->next;
         } else {
-            addTerm(&result, poly1->coefficient + poly2->coefficient, poly1->exponent);
+            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+            newNode->coefficient = poly1->coefficient + poly2->coefficient;
+            newNode->exponent = poly1->exponent;
+            newNode->next = result;
+            result = newNode;
             poly1 = poly1->next;
             poly2 = poly2->next;
         }
     }
 
     while (poly1 != NULL) {
-        addTerm(&result, poly1->coefficient, poly1->exponent);
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->coefficient = poly1->coefficient;
+        newNode->exponent = poly1->exponent;
+        newNode->next = result;
+        result = newNode;
         poly1 = poly1->next;
     }
+
     while (poly2 != NULL) {
-        addTerm(&result, poly2->coefficient, poly2->exponent);
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->coefficient = poly2->coefficient;
+        newNode->exponent = poly2->exponent;
+        newNode->next = result;
+        result = newNode;
         poly2 = poly2->next;
     }
 
-    return result;
-}
-void freePoly(struct Term* poly) {
-    struct Term* temp;
-    while (poly != NULL) {
-        temp = poly;
-        poly = poly->next;
+    printf("\nResultant Polynomial: ");
+    struct Node* temp = result;
+    while (temp != NULL) {
+        printf("%dx^%d", temp->coefficient, temp->exponent);
+        if (temp->next != NULL) {
+            printf(" + ");
+        }
+        temp = temp->next;
+    }
+    printf("\n");
+
+    while (result != NULL) {
+        struct Node* temp = result;
+        result = result->next;
         free(temp);
     }
-}
-
-int main() {
-    struct Term* poly1 = NULL;
-    struct Term* poly2 = NULL;
-    struct Term* result = NULL;
-    int choice, coef, exp;
-
-    do {
-        printf("Menu:\n");
-        printf("1. Add term to polynomial 1\n");
-        printf("2. Add term to polynomial 2\n");
-        printf("3. Display polynomial 1\n");
-        printf("4. Display polynomial 2\n");
-        printf("5. Add polynomials\n");
-        printf("6. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                printf("Enter coefficient and exponent for polynomial 1 term: ");
-                scanf("%d %d", &coef, &exp);
-                addTerm(&poly1, coef, exp);
-                break;
-            case 2:
-                printf("Enter coefficient and exponent for polynomial 2 term: ");
-                scanf("%d %d", &coef, &exp);
-                addTerm(&poly2, coef, exp);
-                break;
-            case 3:
-                printf("Polynomial 1: ");
-                displayPoly(poly1);
-                break;
-            case 4:
-                printf("Polynomial 2: ");
-                displayPoly(poly2);
-                break;
-            case 5:
-                printf("Adding polynomials...\n");
-                result = addPolynomials(poly1, poly2);
-                printf("Resultant polynomial: ");
-                displayPoly(result);
-                freePoly(result);
-                break;
-            case 6:
-                // Exit the program and free allocated memory
-                freePoly(poly1);
-                freePoly(poly2);
-                break;
-            default:
-                printf("Invalid choice. Please try again.\n");
-        }
-    } while (choice != 6);
 
     return 0;
 }
