@@ -1,6 +1,6 @@
 #include<stdio.h>
 #define size 10
-int front = -1,rear = -1;
+int front =-1,rear =-1;
 struct PQ
 {
     int e;
@@ -18,14 +18,14 @@ void enq()
     else
     {
         if(front<0 && rear<0)
-        {
-            front=0;}
-            rear=rear+1;
+        
+            front=0;
+            rear=rear+1;}
             printf("enter the item and its priority ");
             scanf("%d%d",&Q[rear].e,&Q[rear].p);
-            for(i=0;i<rear-1;i++)
+            for(i=0;i<=rear-1;i++)
             {
-                for(j=0;j<rear-i-1;j++)
+                for(j=0;j<=rear-i-1;j++)
                 {
                     if(Q[j].p>Q[j+1].p)
                     {
@@ -35,13 +35,7 @@ void enq()
                         Q[j].p=Q[j+1].p;
                         Q[j+1].e=temp1;
                         Q[j+1].p=temp2;
-                        
-                    }
-                }
-            }
-        
-    }
-}
+                              }   }   }  }
 
 void deq()
 {
@@ -59,22 +53,15 @@ void deq()
          }
          else
          {
-             for(int i=0;i<=rear;i++)
-             {
-                 Q[i].e=Q[i+1].e;
-                 Q[i].p=Q[i+1].p;
-             }
-         }
-     }
-}
+             front=front+1;
+         }}}
      
      void display()
      {
          for(int i=front;i<=rear;i++)
          {
              printf("Item:%d,priority:%d\n",Q[i].e,Q[i].p);
-         }
-     }
+         }}
 void main()
 {
     int c;
@@ -103,5 +90,4 @@ void main()
                 printf("Invalid statement");
                 break;
             }
-    }while(c!=4);
-}
+    }while(c!=4);}
