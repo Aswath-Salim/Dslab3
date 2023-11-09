@@ -58,7 +58,24 @@ int main() {
             traverse->next = temp;
         }
     }
-
+printf("\n polynomial 1 \n ");
+    temp = poly1;
+    while (temp != NULL) {
+        printf("%dx^%d", temp->coefficient, temp->exponent);
+        temp = temp->next;
+        if (temp != NULL) {
+            printf(" + ");
+        }
+    }
+    printf("\n polynomial 2 \n ");
+    temp = poly2;
+    while (temp != NULL) {
+        printf("%dx^%d", temp->coefficient, temp->exponent);
+        temp = temp->next;
+        if (temp != NULL) {
+            printf(" + ");
+        }
+    }
  
     while (poly1 != NULL && poly2 != NULL) {
         temp = (Node*)malloc(sizeof(Node));
@@ -122,7 +139,7 @@ int main() {
     }
 
  
-    printf("Resultant polynomial after addition: ");
+    printf("\n Resultant polynomial after addition: ");
     temp = result;
     while (temp != NULL) {
         printf("%dx^%d", temp->coefficient, temp->exponent);
