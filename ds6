@@ -7,96 +7,134 @@ struct Node {
     struct Node* next;
 };
 
+typedef struct Node Node;
+
 int main() {
-    struct Node *poly1 = NULL, *poly2 = NULL, *result = NULL;
-    int coef, exp, choice;
-    printf("Enter the first polynomial:\n");
-    do {
-        printf("Enter coefficient: ");
-        scanf("%d", &coef);
-        printf("Enter exponent: ");
-        scanf("%d", &exp);
-        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-        newNode->coefficient = coef;
-        newNode->exponent = exp;
-        newNode->next = poly1;
-        poly1 = newNode;
-        printf("Do you want to enter more terms for the first polynomial? (1 for Yes, 0 for No): ");
-        scanf("%d", &choice);
-    } while (choice != 0);
+    Node *poly1 = NULL, *poly2 = NULL, *result = NULL;
+    Node *temp;
 
-    printf("\nEnter the second polynomial:\n");
-    do {
-        printf("Enter coefficient: ");
-        scanf("%d", &coef);
-        printf("Enter exponent: ");
-        scanf("%d", &exp);
-        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-        newNode->coefficient = coef;
-        newNode->exponent = exp;
-        newNode->next = poly2;
-        poly2 = newNode;
-        printf("Do you want to enter more terms for the second polynomial? (1 for Yes, 0 for No): ");
-        scanf("%d", &choice);
-    } while (choice != 0);
+    int coefficient, exponent;
+    printf("Enter the first polynomial (coefficient exponent, terminate with -1 -1):\n");
+    while (1) {
+        scanf("%d %d", &coefficient, &exponent);
+        if (coefficient == -1 && exponent == -1) {
+            break;
+        }
+        temp = (Node*)malloc(sizeof(Node));
+        temp->coefficient = coefficient;
+        temp->exponent = exponent;
+        temp->next = NULL;
 
-    while (poly1 != NULL && poly2 != NULL) {
-        if (poly1->exponent > poly2->exponent) {
-            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-            newNode->coefficient = poly1->coefficient;
-            newNode->exponent = poly1->exponent;
-            newNode->next = result;
-            result = newNode;
-            poly1 = poly1->next;
-        } else if (poly1->exponent < poly2->exponent) {
-            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-            newNode->coefficient = poly2->coefficient;
-            newNode->exponent = poly2->exponent;
-            newNode->next = result;
-            result = newNode;
-            poly2 = poly2->next;
+        if (poly1 == NULL) {
+            poly1 = temp;
         } else {
-            struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-            newNode->coefficient = poly1->coefficient + poly2->coefficient;
-            newNode->exponent = poly1->exponent;
-            newNode->next = result;
-            result = newNode;
-            poly1 = poly1->next;
-            poly2 = poly2->next;
+            Node* traverse = poly1;
+            while (traverse->next != NULL) {
+                traverse = traverse->next;
+            }
+            traverse->next = temp;
         }
     }
 
+
+    printf("Enter the second polynomial (coefficient exponent, terminate with -1 -1):\n");
+    while (1) {
+        scanf("%d %d", &coefficient, &exponent);
+        if (coefficient == -1 && exponent == -1) {
+            break;
+        }
+        temp = (Node*)malloc(sizeof(Node));
+        temp->coefficient = coefficient;
+        temp->exponent = exponent;
+        temp->next = NULL;
+
+        if (poly2 == NULL) {
+            poly2 = temp;
+        } else {
+            Node* traverse = poly2;
+            while (traverse->next != NULL) {
+                traverse = traverse->next;
+            }
+            traverse->next = temp;
+        }
+    }
+
+ 
+    while (poly1 != NULL && poly2 != NULL) {
+        temp = (Node*)malloc(sizeof(Node));
+        temp->next = NULL;
+
+        if (poly1->exponent > poly2->exponent) {
+            temp->coefficient = poly1->coefficient;
+            temp->exponent = poly1->exponent;
+            poly1 = poly1->next;
+        } else if (poly1->exponent < poly2->exponent) {
+            temp->coefficient = poly2->coefficient;
+            temp->exponent = poly2->exponent;
+            poly2 = poly2->next;
+        } else {
+            temp->coefficient = poly1->coefficient + poly2->coefficient;
+            temp->exponent = poly1->exponent;
+            poly1 = poly1->next;
+            poly2 = poly2->next;
+        }
+
+        if (result == NULL) {
+            result = temp;
+        } else {
+            Node* traverse = result;
+            while (traverse->next != NULL) {
+                traverse = traverse->next;
+            }
+            traverse->next = temp;
+        }
+    }
+
+
     while (poly1 != NULL) {
-        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-        newNode->coefficient = poly1->coefficient;
-        newNode->exponent = poly1->exponent;
-        newNode->next = result;
-        result = newNode;
+        temp = (Node*)malloc(sizeof(Node));
+        temp->coefficient = poly1->coefficient;
+        temp->exponent = poly1->exponent;
+        temp->next = NULL;
+
+        Node* traverse = result;
+        while (traverse->next != NULL) {
+            traverse = traverse->next;
+        }
+        traverse->next = temp;
+
         poly1 = poly1->next;
     }
 
     while (poly2 != NULL) {
-        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-        newNode->coefficient = poly2->coefficient;
-        newNode->exponent = poly2->exponent;
-        newNode->next = result;
-        result = newNode;
+        temp = (Node*)malloc(sizeof(Node));
+        temp->coefficient = poly2->coefficient;
+        temp->exponent = poly2->exponent;
+        temp->next = NULL;
+
+        Node* traverse = result;
+        while (traverse->next != NULL) {
+            traverse = traverse->next;
+        }
+        traverse->next = temp;
+
         poly2 = poly2->next;
     }
 
-    printf("\nResultant Polynomial: ");
-    struct Node* temp = result;
+ 
+    printf("Resultant polynomial after addition: ");
+    temp = result;
     while (temp != NULL) {
         printf("%dx^%d", temp->coefficient, temp->exponent);
-        if (temp->next != NULL) {
+        temp = temp->next;
+        if (temp != NULL) {
             printf(" + ");
         }
-        temp = temp->next;
     }
     printf("\n");
 
     while (result != NULL) {
-        struct Node* temp = result;
+        temp = result;
         result = result->next;
         free(temp);
     }
