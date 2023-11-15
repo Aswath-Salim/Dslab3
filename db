@@ -1,0 +1,196 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for doubly linked list
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+int main() {
+    struct Node* head = NULL;
+    int choice, data, position;
+    struct Node* newNode;
+
+    do {
+        printf("\n1. Insert at Front\n2. Insert at End\n3. Insert at Position\n");
+        printf("4. Delete at Front\n5. Delete at End\n6. Delete at Position\n");
+        printf("7. Display\n8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to insert at the front: ");
+                scanf("%d", &data);
+
+                newNode = (struct Node*)malloc(sizeof(struct Node));
+                newNode->data = data;
+                newNode->prev = NULL;
+                newNode->next = head;
+
+                if (head != NULL) {
+                    head->prev = newNode;
+                }
+
+                head = newNode;
+                break;
+
+            case 2:
+                printf("Enter data to insert at the end: ");
+                scanf("%d", &data);
+
+                newNode = (struct Node*)malloc(sizeof(struct Node));
+                newNode->data = data;
+                newNode->next = NULL;
+
+                if (head == NULL) {
+                    newNode->prev = NULL;
+                    head = newNode;
+                } else {
+                    struct Node* temp = head;
+                    while (temp->next != NULL) {
+                        temp = temp->next;
+                    }
+                    temp->next = newNode;
+                    newNode->prev = temp;
+                }
+                break;
+
+            case 3:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                printf("Enter position to insert at: ");
+                scanf("%d", &position);
+
+                newNode = (struct Node*)malloc(sizeof(struct Node));
+                newNode->data = data;
+
+                if (position <= 1) {
+                    newNode->prev = NULL;
+                    newNode->next = head;
+                    if (head != NULL) {
+                        head->prev = newNode;
+                    }
+                    head = newNode;
+                    break;
+                }
+
+                struct Node* temp = head;
+                int count = 1;
+                while (count < position - 1 && temp != NULL) {
+                    temp = temp->next;
+                    count++;
+                }
+
+                if (temp == NULL) {
+                    printf("Position out of range.\n");
+                    break;
+                }
+
+                newNode->next = temp->next;
+                newNode->prev = temp;
+                if (temp->next != NULL) {
+                    temp->next->prev = newNode;
+                }
+                temp->next = newNode;
+                break;
+
+            case 4:
+                if (head == NULL) {
+                    printf("List is empty.\n");
+                } else {
+                    struct Node*temp = head;
+                    head = head->next;
+                    if (head != NULL) {
+                        head->prev = NULL;
+                    }
+                    free(temp);
+                }
+                break;
+
+            case 5:
+                if (head == NULL) {
+                    printf("List is empty.\n");
+                } else {
+                    struct Node* temp = head;
+                    while (temp->next != NULL) {
+                        temp = temp->next;
+                    }
+
+                    if (temp->prev != NULL) {
+                        temp->prev->next = NULL;
+                    } else {
+                        head = NULL;
+                    }
+                    free(temp);
+                }
+                break;
+
+            case 6:
+                if (head == NULL) {
+                    printf("List is empty.\n");
+                } else {
+                    printf("Enter position to delete: ");
+                    scanf("%d", &position);
+
+                    if (position <= 1) {
+                        struct Node* temp = head;
+                        head = head->next;
+                        if (head != NULL) {
+                            head->prev = NULL;
+                        }
+                        free(temp);
+                        break;
+                    }
+
+                    struct Node* temp = head;
+                    int count = 1;
+                    while (count < position && temp != NULL) {
+                        temp = temp->next;
+                        count++;
+                    }
+
+                    if (temp == NULL) {
+                        printf("Position out of range.\n");
+                        break;
+                    }
+
+                    if (temp->next != NULL) {
+                        temp->next->prev = temp->prev;
+                    }
+                    temp->prev->next = temp->next;
+                    free(temp);
+                }
+                break;
+
+            case 7:
+                printf("Linked List: ");
+                struct Node* temp = head;
+                while (temp != NULL) {
+                    printf("%d ", temp->data);
+                    temp = temp->next;
+                }
+                printf("\n");
+                break;
+
+            case 8:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid choice.\n");
+        }
+    } while (choice != 8);
+
+    // Free memory for all nodes before exiting
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* next = current->next;
+        free(current);
+        current = next;
+    }
+
+    return 0;
+}
