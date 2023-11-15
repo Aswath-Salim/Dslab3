@@ -167,10 +167,10 @@ int main() {
 
             case 7:
                 printf("Linked List: ");
-                struct Node* temp = head;
-                while (temp != NULL) {
-                    printf("%d ", temp->data);
-                    temp = temp->next;
+                struct Node* tempo = head;
+                while (tempo != NULL) {
+                    printf("%d ", tempo->data);
+                    tempo = tempo->next;
                 }
                 printf("\n");
                 break;
