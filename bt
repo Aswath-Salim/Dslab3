@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* insertNode(struct Node* root, int data, char direction) {
+    if (root == NULL)
+        return createNode(data);
+    
+    if (direction == 'L')
+        root->left = insertNode(root->left, data, direction);
+    else if (direction == 'R')
+        root->right = insertNode(root->right, data, direction);
+    
+    return root;
+}
+
+struct Node* deleteNode(struct Node* root, int data) {
+    if (root == NULL)
+        return root;
+    
+    if (data < root->data)
+        root->left = deleteNode(root->left, data);
+    else if (data > root->data)
+        root->right = deleteNode(root->right, data);
+    else {
+        if (root->left == NULL) {
+            struct Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        
+        struct Node* temp = root->right;
+        while (temp->left != NULL)
+            temp = temp->left;
+        
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+void preOrderTraversal(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preOrderTraversal(root->left);
+        preOrderTraversal(root->right);
+    }
+}
+
+void inOrderTraversal(struct Node* root) {
+    if (root != NULL) {
+        inOrderTraversal(root->left);
+        printf("%d ", root->data);
+        inOrderTraversal(root->right);
+    }
+}
+
+void postOrderTraversal(struct Node* root) {
+    if (root != NULL) {
+        postOrderTraversal(root->left);
+        postOrderTraversal(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+void displayMenu() {
+    printf("\nBinary Tree Operations\n");
+    printf("1. Insert Node\n");
+    printf("2. Delete Node\n");
+    printf("3. Pre-order Traversal\n");
+    printf("4. In-order Traversal\n");
+    printf("5. Post-order Traversal\n");
+    printf("6. Exit\n");
+    printf("Enter your choice: ");
+}
+
+int main() {
+    struct Node* root = NULL;
+    int choice, data;
+    char direction;
+
+    do {
+        displayMenu();
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                printf("Enter direction (L/R) to insert (left/right): ");
+                scanf(" %c", &direction);
+                root = insertNode(root, data, direction);
+                break;
+            case 2:
+                printf("Enter data to delete: ");
+                scanf("%d", &data);
+                root = deleteNode(root, data);
+                break;
+            case 3:
+                printf("Pre-order Traversal: ");
+                preOrderTraversal(root);
+                printf("\n");
+                break;
+            case 4:
+                printf("In-order Traversal: ");
+                inOrderTraversal(root);
+                printf("\n");
+                break;
+            case 5:
+                printf("Post-order Traversal: ");
+                postOrderTraversal(root);
+                printf("\n");
+                break;
+            case 6:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please enter a valid option.\n");
+        }
+    } while(choice != 6);
+
+    return 0;
+}
