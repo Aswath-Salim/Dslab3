@@ -26,33 +26,24 @@ struct Node* insertNode(struct Node* root, int data, char direction) {
     return root;
 }
 
-struct Node* deleteNode(struct Node* root, int data) {
+void deleteNode(struct Node* root, int value) {
     if (root == NULL)
-        return root;
-    
-    if (data < root->data)
-        root->left = deleteNode(root->left, data);
-    else if (data > root->data)
-        root->right = deleteNode(root->right, data);
-    else {
-        if (root->left == NULL) {
-            struct Node* temp = root->right;
-            free(root);
-            return temp;
-        } else if (root->right == NULL) {
-            struct Node* temp = root->left;
-            free(root);
-            return temp;
-        }
-        
-        struct Node* temp = root->right;
-        while (temp->left != NULL)
-            temp = temp->left;
-        
-        root->data = temp->data;
-        root->right = deleteNode(root->right, temp->data);
+        return;
+
+    if (root->left != NULL && root->left->data == value) {
+        free(root->left);
+        root->left = NULL;
+        return;
     }
-    return root;
+
+    if (root->right != NULL && root->right->data == value) {
+        free(root->right);
+        root->right = NULL;
+        return;
+    }
+
+    deleteNode(root->left, value);
+    deleteNode(root->right, value);
 }
 
 void preOrderTraversal(struct Node* root) {
@@ -110,7 +101,7 @@ int main() {
             case 2:
                 printf("Enter data to delete: ");
                 scanf("%d", &data);
-                root = deleteNode(root, data);
+               
                 break;
             case 3:
                 printf("Pre-order Traversal: ");
