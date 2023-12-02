@@ -1,0 +1,70 @@
+//The Luhn algorithm, also known as the modulus 10 or mod 10 algorithm, is a simple checksum formula used to validate a variety of identification numbers, such as credit card numbers, IMEI numbers (for mobile phones), and more.
+
+The algorithm works by verifying the validity of a given number through a series of steps:
+
+Starting from the rightmost digit (excluding the check digit), double the value of every second digit. If the doubled value is greater than 9, subtract 9 from the result.
+Sum up all the digits, including both the unchanged digits and the modified doubled digits.
+If the total sum is a multiple of 10, the number is valid according to the Luhn algorithm.
+Here's an example of the algorithm in action:
+
+Let's take the credit card number 4556 7375 7861 4623.
+
+Starting from the rightmost digit (excluding the check digit, which is 3 in this case):
+
+Double every second digit: (4 5 5 6 7 3 7 5 7 8 6 1 4 6 2) -> (8 5 10 6 14 3 14 5 14 8 12 1 8 6 4)
+If the doubled value is greater than 9, subtract 9: (8 5 1 6 5 3 5 5 5 8 3 1 8 6 4)
+Sum up all the digits: 8 + 5 + 1 + 6 + 5 + 3 + 5 + 5 + 5 + 8 + 3 + 1 + 8 + 6 + 4 = 73
+
+Check if the total sum is a multiple of 10: 73 % 10 = 3
+Since 73 is not a multiple of 10, the credit card number 4556 7375 7861 4623 is invalid according to the Luhn algorithm.
+
+
+
+
+
+
+  #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+bool is_valid_credit_card(const char *number) {
+    int len = strlen(number);
+    int sum = 0;
+    bool alternate = false;
+
+    for (int i = len - 1; i >= 0; i--) {
+        int digit = number[i] - '0';
+
+        if (!isdigit(number[i])) {
+            return false;
+        }
+
+        if (alternate) {
+            digit *= 2;
+            if (digit > 9) {
+                digit = digit % 10 + 1;
+            }
+        }
+
+        alternate = !alternate;
+        sum += digit;
+    }
+
+    return (sum % 10 == 0);
+}
+
+int main() {
+    char credit_card_number[20];
+
+    printf("Enter credit card number: ");
+    scanf("%s", credit_card_number);
+
+    if (is_valid_credit_card(credit_card_number)) {
+        printf("The credit card number is valid.\n");
+    } else {
+        printf("The credit card number is invalid.\n");
+    }
+
+    return 0;
+}
