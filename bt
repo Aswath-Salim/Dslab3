@@ -3,128 +3,137 @@
 
 struct Node {
     int data;
-    struct Node *left;
-    struct Node *right;
+    struct Node* left;
+    struct Node* right;
 };
 
-struct Node* createNode(int data) {
+struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->left = newNode->right = NULL;
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
     return newNode;
 }
 
-struct Node* insertNode(struct Node* root, int data, char direction) {
-    if (root == NULL)
-        return createNode(data);
-    
-    if (direction == 'L')
-        root->left = insertNode(root->left, data, direction);
-    else if (direction == 'R')
-        root->right = insertNode(root->right, data, direction);
-    
-    return root;
+void insertLeftThenRight(struct Node* root, int leftValue, int rightValue) {
+    struct Node* leftNode = createNode(leftValue);
+    struct Node* rightNode = createNode(rightValue);
+
+    root->left = leftNode;
+    root->right = rightNode;
 }
 
-void deleteNode(struct Node* root, int value) {
+void inorder(struct Node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+void postorder(struct Node* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+void preorder(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void deleteLeft(struct Node* root) {
     if (root == NULL)
         return;
 
-    if (root->left != NULL && root->left->data == value) {
-        free(root->left);
+    struct Node* temp = root->left;
+    if (temp != NULL) {
         root->left = NULL;
-        return;
+        free(temp);
     }
+}
 
-    if (root->right != NULL && root->right->data == value) {
-        free(root->right);
+void deleteRight(struct Node* root) {
+    if (root == NULL)
+        return;
+
+    struct Node* temp = root->right;
+    if (temp != NULL) {
         root->right = NULL;
+        free(temp);
+    }
+}
+
+void deleteTree(struct Node* root) {
+    if (root == NULL)
         return;
-    }
 
-    deleteNode(root->left, value);
-    deleteNode(root->right, value);
-}
-
-void preOrderTraversal(struct Node* root) {
-    if (root != NULL) {
-        printf("%d ", root->data);
-        preOrderTraversal(root->left);
-        preOrderTraversal(root->right);
-    }
-}
-
-void inOrderTraversal(struct Node* root) {
-    if (root != NULL) {
-        inOrderTraversal(root->left);
-        printf("%d ", root->data);
-        inOrderTraversal(root->right);
-    }
-}
-
-void postOrderTraversal(struct Node* root) {
-    if (root != NULL) {
-        postOrderTraversal(root->left);
-        postOrderTraversal(root->right);
-        printf("%d ", root->data);
-    }
-}
-
-void displayMenu() {
-    printf("\nBinary Tree Operations\n");
-    printf("1. Insert Node\n");
-    printf("2. Delete Node\n");
-    printf("3. Pre-order Traversal\n");
-    printf("4. In-order Traversal\n");
-    printf("5. Post-order Traversal\n");
-    printf("6. Exit\n");
-    printf("Enter your choice: ");
+    deleteTree(root->left);
+    deleteTree(root->right);
+    free(root);
 }
 
 int main() {
-    struct Node* root = NULL;
-    int choice, data;
-    char direction;
+    struct Node* root = createNode(1);
 
+    int choice, leftValue, rightValue;
     do {
-        displayMenu();
+        printf("\nBinary Tree Operations:\n");
+        printf("1. Insert at Left then Right\n");
+        printf("2. Inorder Traversal\n");
+        printf("3. Postorder Traversal\n");
+        printf("4. Preorder Traversal\n");
+        printf("5. Delete Left Leaf\n");
+        printf("6. Delete Right Leaf\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
         scanf("%d", &choice);
 
-        switch(choice) {
+        switch (choice) {
             case 1:
-                printf("Enter data to insert: ");
-                scanf("%d", &data);
-                printf("Enter direction (L/R) to insert (left/right): ");
-                scanf(" %c", &direction);
-                root = insertNode(root, data, direction);
+                printf("Enter left value: ");
+                scanf("%d", &leftValue);
+                printf("Enter right value: ");
+                scanf("%d", &rightValue);
+                insertLeftThenRight(root, leftValue, rightValue);
+                printf("Nodes inserted at left and right.\n");
                 break;
             case 2:
-                printf("Enter data to delete: ");
-                scanf("%d", &data);
-               
+                printf("Inorder Traversal: ");
+                inorder(root);
+                printf("\n");
                 break;
             case 3:
-                printf("Pre-order Traversal: ");
-                preOrderTraversal(root);
+                printf("Postorder Traversal: ");
+                postorder(root);
                 printf("\n");
                 break;
             case 4:
-                printf("In-order Traversal: ");
-                inOrderTraversal(root);
+                printf("Preorder Traversal: ");
+                preorder(root);
                 printf("\n");
                 break;
             case 5:
-                printf("Post-order Traversal: ");
-                postOrderTraversal(root);
-                printf("\n");
+                deleteLeft(root);
+                printf("Left leaf node deleted.\n");
                 break;
             case 6:
-                printf("Exiting...\n");
+                deleteRight(root);
+                printf("Right leaf node deleted.\n");
+                break;
+            case 7:
+                deleteTree(root);
+                printf("Exiting... Memory freed.\n");
                 break;
             default:
-                printf("Invalid choice! Please enter a valid option.\n");
+                printf("Invalid choice. Please enter a valid choice.\n");
         }
-    } while(choice != 6);
+    } while (choice != 7);
 
     return 0;
 }
