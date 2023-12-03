@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Define constants
+#define INPUT_NODES 4 // Number of input nodes (features)
+#define HIDDEN_NODES 5 // Number of hidden layer nodes
+#define OUTPUT_NODES 1 // Number of output nodes (fraud or not-fraud)
+
+// Define the neural network structure
+typedef struct NeuralNetwork {
+    double input_weights[INPUT_NODES][HIDDEN_NODES];
+    double hidden_weights[HIDDEN_NODES][OUTPUT_NODES];
+    double hidden_bias[HIDDEN_NODES];
+    double output_bias[OUTPUT_NODES];
+} NeuralNetwork;
+
+// Sigmoid activation function
+double sigmoid(double x) {
+    return 1.0 / (1.0 + exp(-x));
+}
+
+// Neural network initialization
+void initialize(NeuralNetwork *nn) {
+    // Initialize input weights and hidden weights with random values
+    for (int i = 0; i < INPUT_NODES; ++i) {
+        for (int j = 0; j < HIDDEN_NODES; ++j) {
+            nn->input_weights[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+        }
+    }
+
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        for (int j = 0; j < OUTPUT_NODES; ++j) {
+            nn->hidden_weights[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+        }
+    }
+
+    // Initialize biases with random values
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        nn->hidden_bias[i] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+    }
+
+    for (int i = 0; i < OUTPUT_NODES; ++i) {
+        nn->output_bias[i] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+    }
+}
+
+// Forward propagation in the neural network
+double forwardPropagation(NeuralNetwork *nn, double *input) {
+    double hidden_layer[HIDDEN_NODES];
+    double output_layer[OUTPUT_NODES];
+
+    // Calculate values for the hidden layer
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        double weighted_sum = 0.0;
+        for (int j = 0; j < INPUT_NODES; ++j) {
+            weighted_sum += input[j] * nn->input_weights[j][i];
+        }
+        hidden_layer[i] = sigmoid(weighted_sum + nn->hidden_bias[i]);
+    }
+
+    // Calculate values for the output layer
+    for (int i = 0; i < OUTPUT_NODES; ++i) {
+        double weighted_sum = 0.0;
+        for (int j = 0; j < HIDDEN_NODES; ++j) {
+            weighted_sum += hidden_layer[j] * nn->hidden_weights[j][i];
+        }
+        output_layer[i] = sigmoid(weighted_sum + nn->output_bias[i]);
+    }
+
+    return output_layer[0]; // Return the output (fraud or not-fraud)
+}
+
+int main() {
+    // Create a neural network
+    NeuralNetwork nn;
+    initialize(&nn);
+
+    // Example input (features of credit card transactions)
+    double input[INPUT_NODES] = {0.2, 0.5, 0.1, 0.8}; // Example input values
+
+    // Perform forward propagation to detect fraud
+    double result = forwardPropagation(&nn, input);
+
+    printf("Probability of fraud: %.4f\n", result);
+
+    return 0;
+}
