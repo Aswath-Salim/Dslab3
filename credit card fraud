@@ -1,0 +1,115 @@
+ #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdlib.h>
+#define INPUT_NODES 4 
+#define HIDDEN_NODES 5
+#define OUTPUT_NODES 1 
+
+typedef struct NeuralNetwork {
+    double input_weights[INPUT_NODES][HIDDEN_NODES];
+    double hidden_weights[HIDDEN_NODES][OUTPUT_NODES];
+    double hidden_bias[HIDDEN_NODES];
+    double output_bias[OUTPUT_NODES];
+} NeuralNetwork;
+
+double sigmoid(double x) {
+    return 1.0 / (1.0 + exp(-x));
+}
+
+void initialize(NeuralNetwork *nn) {
+    for (int i = 0; i < INPUT_NODES; ++i) {
+        for (int j = 0; j < HIDDEN_NODES; ++j) {
+            nn->input_weights[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+        }
+    }
+
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        for (int j = 0; j < OUTPUT_NODES; ++j) {
+            nn->hidden_weights[i][j] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+        }
+    }
+
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        nn->hidden_bias[i] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+    }
+
+    for (int i = 0; i < OUTPUT_NODES; ++i) {
+        nn->output_bias[i] = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+    }
+}
+
+    double forwardPropagation(NeuralNetwork *nn, double *input) {
+    double hidden_layer[HIDDEN_NODES];
+    double output_layer[OUTPUT_NODES];
+
+    for (int i = 0; i < HIDDEN_NODES; ++i) {
+        double weighted_sum = 0.0;
+        for (int j = 0; j < INPUT_NODES; ++j) {
+            weighted_sum += input[j] * nn->input_weights[j][i];
+        }
+        hidden_layer[i] = sigmoid(weighted_sum + nn->hidden_bias[i]);
+    }
+
+    for (int i = 0; i < OUTPUT_NODES; ++i) {
+        double weighted_sum = 0.0;
+        for (int j = 0; j < HIDDEN_NODES; ++j) {
+            weighted_sum += hidden_layer[j] * nn->hidden_weights[j][i];
+        }
+        output_layer[i] = sigmoid(weighted_sum + nn->output_bias[i]);
+    }
+
+    return output_layer[0];
+}
+
+
+bool is_valid_credit_card(const char *number) {
+    int len = strlen(number);
+    int sum = 0;
+    bool alternate = false;
+
+    for (int i = len - 1; i >= 0; i--) {
+        int digit = number[i] - '0';
+
+        if (!isdigit(number[i])) {
+            return false;
+        }
+
+        if (alternate) {
+            digit *= 2;
+            if (digit > 9) {
+                digit = digit % 10 + 1;
+            }
+        }
+
+        alternate = !alternate;
+        sum += digit;
+    }
+
+    return (sum % 10 == 0);
+}
+
+    int main() {
+    char credit_card_number[20];
+    NeuralNetwork nn;
+    initialize(&nn);
+    double input[INPUT_NODES] = {0.2, 0.5, 0.1, 0.8}; // Example input values from database
+
+
+    printf("Enter credit card number: ");
+    scanf("%s", credit_card_number);
+
+    if (is_valid_credit_card(credit_card_number)) {
+        printf("The credit card number is valid.\n");
+         double result = forwardPropagation(&nn, input);
+
+    printf("Probability of fraud: %.4f\n", result);
+        
+    } else {
+        printf("The credit card number is invalid.\n");
+    }
+
+    return 0;
+}
