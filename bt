@@ -3,152 +3,126 @@
 
 struct Node {
     int data;
-    struct Node* left;
-    struct Node* right;
-}root;
+    struct Node *left;
+    struct Node *right;
+};
 
-struct Node* createNode(int value) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = value;
+struct Node *createNode(int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = data;
     newNode->left = NULL;
     newNode->right = NULL;
     return newNode;
 }
 
-void insertLeft(struct Node* root, int value) {
-    if (root->left == NULL) {
-        struct Node* newNode = createNode(value);
-        root->left = newNode;
-    } else {
-        printf("Left child already exists! Insertion not possible.\n");
+struct Node *insertLeaf(struct Node *root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (root->left == NULL)
+        root->left = createNode(data);
+    else if (root->right == NULL)
+        root->right = createNode(data);
+    else {
+        root->left = insertLeaf(root->left, data);
     }
+    return root;
 }
 
-void insertRight(struct Node* root, int value) {
-    if (root->right == NULL) {
-        struct Node* newNode = createNode(value);
-        root->right = newNode;
-    } else {
-        printf("Right child already exists! Insertion not possible.\n");
-    }
-}
-
-void inorder(struct Node* root) {
-    if (root != NULL) {
-        inorder(root->left);
-        printf("%d ", root->data);
-        inorder(root->right);
-    }
-}
-
-void preorder(struct Node* root) {
-    if (root != NULL) {
-        printf("%d ", root->data);
-        preorder(root->left);
-        preorder(root->right);
-    }
-}
-
-void postorder(struct Node* root) {
-    if (root != NULL) {
-        postorder(root->left);
-        postorder(root->right);
-        printf("%d ", root->data);
-    }
-}
-
-void deleteLeftLeaf(struct Node* root) {
+void inorder(struct Node *root) {
     if (root == NULL)
         return;
 
-    if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {
-        free(root->left);
-        root->left = NULL;
-        return;
-    }
-
-    deleteLeftLeaf(root->left);
-    deleteLeftLeaf(root->right);
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
 }
 
-void deleteRightLeaf(struct Node* root) {
+void preorder(struct Node *root) {
     if (root == NULL)
         return;
 
-    if (root->right != NULL && root->right->left == NULL && root->right->right == NULL) {
-        free(root->right);
-        root->right = NULL;
-        return;
-    }
-
-    deleteRightLeaf(root->left);
-    deleteRightLeaf(root->right);
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
 }
 
-void displayMenu() {
-    printf("\n1. Insert at left leaf\n");
-    printf("2. Insert at right leaf\n");
-    printf("3. Inorder Traversal\n");
-    printf("4. Preorder Traversal\n");
-    printf("5. Postorder Traversal\n");
-    printf("6. Delete left leaf node\n");
-    printf("7. Delete right leaf node\n");
-    printf("8. Exit\n");
+void postorder(struct Node *root) {
+    if (root == NULL)
+        return;
+
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
+
+struct Node *deleteLeaf(struct Node *root, int key) {
+    if (root == NULL)
+        return NULL;
+
+    if (root->left == NULL && root->right == NULL && root->data == key) {
+        free(root);
+        return NULL;
+    }
+
+    root->left = deleteLeaf(root->left, key);
+    root->right = deleteLeaf(root->right, key);
+
+    return root;
+}
+
+void menu() {
+    printf("\nBinary Tree Operations\n");
+    printf("1. Insert a Leaf Node\n");
+    printf("2. Inorder Traversal\n");
+    printf("3. Preorder Traversal\n");
+    printf("4. Postorder Traversal\n");
+    printf("5. Delete a Leaf Node\n");
+    printf("6. Exit\n");
 }
 
 int main() {
-    struct Node* root = createNode(1);
-    int choice, value;
-   
-    printf("Enter root: ");
-     scanf("%d",&root->data );
-    
+    struct Node *root = NULL;
+    int choice, data, key;
+
     do {
-        displayMenu();
+        menu();
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
-                printf("Enter value to insert at left leaf: ");
-                scanf("%d", &value);
-                insertLeft(root, value);
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                root = insertLeaf(root, data);
                 break;
             case 2:
-                printf("Enter value to insert at right leaf: ");
-                scanf("%d", &value);
-                insertRight(root, value);
-                break;
-            case 3:
                 printf("Inorder Traversal: ");
                 inorder(root);
                 printf("\n");
                 break;
-            case 4:
+            case 3:
                 printf("Preorder Traversal: ");
                 preorder(root);
                 printf("\n");
                 break;
-            case 5:
+            case 4:
                 printf("Postorder Traversal: ");
                 postorder(root);
                 printf("\n");
                 break;
+            case 5:
+                printf("Enter leaf node value to delete: ");
+                scanf("%d", &key);
+                root = deleteLeaf(root, key);
+                break;
             case 6:
-                deleteLeftLeaf(root);
-                printf("Deleted left leaf node.\n");
-                break;
-            case 7:
-                deleteRightLeaf(root);
-                printf("Deleted right leaf node.\n");
-                break;
-            case 8:
-                printf("Exiting the program. Goodbye!\n");
+                printf("Exiting...\n");
                 break;
             default:
                 printf("Invalid choice! Please enter a valid option.\n");
         }
-    } while (choice != 8);
+    } while (choice != 6);
 
     return 0;
 }
