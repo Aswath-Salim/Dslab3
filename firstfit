@@ -7,7 +7,7 @@ void bestFit(int blockSize[], int m, int processSize[], int n);
 void worstFit(int blockSize[], int m, int processSize[], int n);
 
 int main() {
-    int blockSize[MAX_BLOCKS], processSize[MAX_BLOCKS];
+    int originalBlockSize[MAX_BLOCKS], blockSize[MAX_BLOCKS], processSize[MAX_BLOCKS];
     int m, n, choice;
 
     printf("Enter the number of memory blocks: ");
@@ -16,7 +16,8 @@ int main() {
     printf("Enter the size of each memory block:\n");
     for (int i = 0; i < m; i++) {
         printf("Block %d: ", i + 1);
-        scanf("%d", &blockSize[i]);
+        scanf("%d", &originalBlockSize[i]);
+        blockSize[i] = originalBlockSize[i];
     }
 
     printf("\nEnter the number of processes: ");
@@ -52,6 +53,11 @@ int main() {
                 break;
             default:
                 printf("Invalid choice! Please enter a valid option.\n");
+        }
+        
+        // Reset blockSize to its original state after each allocation
+        for (int i = 0; i < m; i++) {
+            blockSize[i] = originalBlockSize[i];
         }
     } while (choice != 4);
 
